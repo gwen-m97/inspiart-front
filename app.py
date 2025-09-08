@@ -56,7 +56,6 @@ st.markdown(
 )
 
 #image buffer
-url = "https://inspiart-front-ezzt5hf8yf9rfrkaevwu5w.streamlit.app/"
 
 st.markdown("---")
 
@@ -88,17 +87,30 @@ relation_type = st.selectbox("Select relatedness type", ["Style", "Content", "Co
 show_related = st.button("Show 5 Related Images")
 
 if show_related:
+     # End points
+
+    if relation_type == "Style":
+        pass
+    elif relation_type == "Content":
+        url = "https://taxifare-174146437405.europe-west1.run.app/upload_image"
+
+    elif relation_type == "Content but another style":
+        pass
+      
     payload = {"relation_type": relation_type.lower()}
     res = requests.post(url, files={'img': img.getvalue()}, data=payload)
     res_dict = json.loads(res.json())
 
-
+# 5 images output
     if res.ok:
+
         related_data = res.json()
         st.subheader("Related Artworks")
-        for i in range(5):
+        cols = st.columns(5)
+
+        for i, sim_img in enumerate(res_dict.values()):
             # sim_img = Image.open(image_paths[indices[0][i]])
-            sim_img = res_dict[i]  # placeholder
-            cols[i].image(sim_img, use_column_width=True)
+##            sim_img = res_dict.values()[i]  # placeholder
+            cols[i].image(sim_img, use_container_width=True)
 else:
     st.error("I'm sorry, please try again.")
