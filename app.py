@@ -112,7 +112,6 @@ if show_related:
 
     elif relation_type == "Similar paintings on content only ":
         pass
-
     payload = {"relation_type": relation_type.lower()}
     res = requests.post(url, files={'img': img.getvalue()}, data=payload)
     res_dict = json.loads(res.json())
