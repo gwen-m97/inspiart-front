@@ -55,16 +55,26 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-#image buffer
-
 st.markdown("---")
 
-### Create a native Streamlit file upload input
+### file upload input
 img = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
 
-## uploading image
+## uploading image, made it smaller
 if img:
-    st.image(img, caption="Here's the image you uploaded ☝️", use_container_width=True)
+    st.markdown(
+        """
+        <style>
+            [data-testid=stImage] img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    st.image(img, use_column_width=True)
 
  # Button to fetch artwork info
     if st.button("Get Artwork Info"):
@@ -82,34 +92,68 @@ if img:
             st.error("I'm sorry, the art work information is not on our database, please try another art work.")
 st.markdown("---")
 
-# Button to find similar artworks
-relation_type = st.selectbox("Select relatedness type", ["Style", "Content", "Content but another style"])
-show_related = st.button("Show 5 Related Images")
+# Button related artworks
+relation_type = st.selectbox("Select relatedness type", ["Similar paintings from the same style", "Similar paintings from different styles", "Similar paintings on content only"])
+
+#show related images button
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
+    show_related = st.button("Show 5 Related Images")
+
+##show_related = st.button("Show 5 Related Images")
 
 if show_related:
      # End points
 
-    if relation_type == "Style":
+    if relation_type == "Similar paintings from the same style":
         pass
-    elif relation_type == "Content":
+    elif relation_type == "Similar paintings from different styles":
         url = "https://taxifare-174146437405.europe-west1.run.app/upload_image"
 
-    elif relation_type == "Content but another style":
+    elif relation_type == "Similar paintings on content only ":
         pass
+
     payload = {"relation_type": relation_type.lower()}
     res = requests.post(url, files={'img': img.getvalue()}, data=payload)
     res_dict = json.loads(res.json())
 
 # 5 images output
     if res.ok:
-
         related_data = res.json()
         st.subheader("Related Artworks")
         cols = st.columns(5)
 
         for i, sim_img in enumerate(res_dict.values()):
-            # sim_img = Image.open(image_paths[indices[0][i]])
-##            sim_img = res_dict.values()[i]  # placeholder
-            cols[i].image(sim_img, use_container_width=True)
-else:
-    st.error("I'm sorry, please try again.")
+            # Wrap image in container to control max size
+            st.markdown(
+                f"""
+                <div style='max-width:400px; margin:auto;'>
+                    <img src="{sim_img}" style='width:100%; height:auto; display:block; margin:auto; border-radius:8px;'/>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+# --- Footer ---
+st.markdown(
+    """
+    <style>
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        color: #333;
+    }
+    </style>
+    <div class="footer">
+        © 2025 Inspiart. Cedric Werkmann, Charles, Fabian, Giovanna Di Giacomo and Gwenaëlle Mustière
+
+    </div>
+    """,
+    unsafe_allow_html=True
+)
