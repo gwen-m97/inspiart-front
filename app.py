@@ -8,6 +8,8 @@ import os
 import json
 import base64
 
+BASE_URL = "https://taxifare-174146437405.europe-west1.run.app"
+
 # Set page tab display
 st.set_page_config(page_title="Inspiart")
 
@@ -80,7 +82,7 @@ if img:
 
  # Button to fetch artwork info
     if st.button("Get Artwork Info"):
-        url = "https://taxifare-174146437405.europe-west1.run.app/upload_image"
+        url = f"{BASE_URL}/samepainting_search"
         res = requests.post(url, files={'img': img.getvalue()})
 
 
@@ -88,13 +90,10 @@ if img:
         if res.ok:
             data = res.json()
         st.subheader("Artwork Information")
-        st.write(f"**Predicted Style:** {data.get('style_predicted', 'Unknown')}")
+        st.write(f"**Artist:** {data.get('artist', 'Unknown')}")
+        st.write(f"**Name:** {data.get('file_name', 'Unknown')}")
 
 
-#            st.subheader("Artwork Information")
- #           st.write(f"**Author:** {data.get('author', 'Unknown')}")
-  #          st.write(f"**Year:** {data.get('year', 'Unknown')}")
-   #         st.write(f"**Style:** {data.get('style', 'Unknown')}")
 st.markdown("---")
 
 # Button related artworks
@@ -112,19 +111,24 @@ if show_related:
      # End points
 
     if relation_type == "Similar paintings from the same style":
-        pass
+        url = f"{BASE_URL}/upload_same_style"
     elif relation_type == "Similar paintings from different styles":
-        url = "https://taxifare-174146437405.europe-west1.run.app/upload_image"
+        url = f"{BASE_URL}/upload_other_style"
+    elif relation_type == "Similar paintings on content only":
+        url = f"{BASE_URL}/upload_image"
 
-    elif relation_type == "Similar paintings on content only ":
-        pass
+
     res = requests.post(url, files={'img': img.getvalue()})
-    res_dict = json.loads(res.json())
 
 # 5 images output
     if res.ok:
         related_data = res.json()
         st.subheader("Related Artworks")
+        if relation_type != "Similar paintings on content only":
+
+            st.markdown("---")
+            st.markdown(f"**Predicted Style:** {related_data.get('predicted_style', 'Unknown')}")
+
         cols = st.columns(5)
 
         images = related_data.get("images", {})
