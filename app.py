@@ -69,27 +69,32 @@ if img:
                 display: block;
                 margin-left: auto;
                 margin-right: auto;
+                width: 400px;
+                height: auto;
             }
         </style>
         """,
         unsafe_allow_html=True
     )
-    st.image(img, use_column_width=True)
+    st.image(img, width=300, use_container_width=True)
 
  # Button to fetch artwork info
     if st.button("Get Artwork Info"):
+        url = "https://taxifare-174146437405.europe-west1.run.app/upload_image"
         res = requests.post(url, files={'img': img.getvalue()})
-        res_dict = json.loads(res.json())
+
 
 
         if res.ok:
             data = res.json()
-            st.subheader("Artwork Information")
-            st.write(f"**Author:** {data.get('author', 'Unknown')}")
-            st.write(f"**Year:** {data.get('year', 'Unknown')}")
-            st.write(f"**Style:** {data.get('style', 'Unknown')}")
-        else:
-            st.error("I'm sorry, the art work information is not on our database, please try another art work.")
+        st.subheader("Artwork Information")
+        st.write(f"**Predicted Style:** {data.get('style_predicted', 'Unknown')}")
+
+
+#            st.subheader("Artwork Information")
+ #           st.write(f"**Author:** {data.get('author', 'Unknown')}")
+  #          st.write(f"**Year:** {data.get('year', 'Unknown')}")
+   #         st.write(f"**Style:** {data.get('style', 'Unknown')}")
 st.markdown("---")
 
 # Button related artworks
@@ -103,6 +108,7 @@ with col2:
 ##show_related = st.button("Show 5 Related Images")
 
 if show_related:
+
      # End points
 
     if relation_type == "Similar paintings from the same style":
@@ -112,8 +118,7 @@ if show_related:
 
     elif relation_type == "Similar paintings on content only ":
         pass
-    payload = {"relation_type": relation_type.lower()}
-    res = requests.post(url, files={'img': img.getvalue()}, data=payload)
+    res = requests.post(url, files={'img': img.getvalue()})
     res_dict = json.loads(res.json())
 
 # 5 images output
@@ -122,12 +127,19 @@ if show_related:
         st.subheader("Related Artworks")
         cols = st.columns(5)
 
-        for i, sim_img in enumerate(res_dict.values()):
-            # Wrap image in container to control max size
+        images = related_data.get("images", {})
+
+    for i, (key, img_info) in enumerate(images.items()):
+        with cols[i % 5]:
             st.markdown(
                 f"""
-                <div style='max-width:400px; margin:auto;'>
-                    <img src="{sim_img}" style='width:100%; height:auto; display:block; margin:auto; border-radius:8px;'/>
+                <div style='max-width:400px; margin:auto; text-align:center;'>
+                    <img src="{img_info['img_url']}"
+                         style='width:100%; height:auto; display:block; margin:auto; border-radius:8px;'/>
+                    <p style="font-size:14px; margin-top:5px;">
+                        <b>{img_info.get('artist', 'Unknown')}</b><br>
+                        {img_info.get('style', 'Unknown')}
+                    </p>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -150,7 +162,7 @@ st.markdown(
     }
     </style>
     <div class="footer">
-        © 2025 Inspiart. Cedric Werkmann, Charles, Fabian, Giovanna Di Giacomo and Gwenaëlle Mustière
+        © 2025 Inspiart. Cedric Werkmann, Charles Lamb, Fabian, Giovanna Di Giacomo and Gwenaëlle Mustière
 
     </div>
     """,
