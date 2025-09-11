@@ -91,15 +91,17 @@ if img:
             data = res.json()
             raw_name = data.get('file_name', 'Unknown')
 
+
         # cleanup
         ## remove extension
             clean_name = re.sub(r"\.(jpg|jpeg|png)$", "", raw_name, flags=re.IGNORECASE)
-        #remove id
-            clean_name = re.sub(r"^\d+(-\d+)*-", "", clean_name)
-        #remove year, cuz i want it to be consistent
-            clean_name = re.sub(r"\b\d{4}\b", "", clean_name)
-        #extra spaces and dashes
-            clean_name = clean_name.replace("-", " ").strip()
+        ## replace underscores, hyphens, and multiple spaces with a single space
+            name = clean_name
+            for char in name:
+                if char in ["_", "-", " "]:
+                    clean_name = clean_name.replace(char, " ")
+                elif not char.isalpha():
+                    clean_name = clean_name.replace(char, "")
         # capitalize each word
             clean_name = clean_name.title()
 
@@ -107,7 +109,11 @@ if img:
 
         st.subheader("Artwork Information")
         st.write(f"**Artist:** {data.get('artist', 'Unknown')}")
-        st.write(f"**Name:** {clean_name}")
+        if clean_name.strip():
+            st.write(f"**Name:** {clean_name}")
+        else:
+            st.write("**Name:** Unknown")
+
 st.markdown("---")
 
 # Button related artworks
