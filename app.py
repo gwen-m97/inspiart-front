@@ -8,7 +8,7 @@ import os
 import json
 import base64
 
-BASE_URL = "https://taxifare-174146437405.europe-west1.run.app"
+BASE_URL = "https://api-122517660338.europe-west1.run.app"
 
 # Set page tab display
 st.set_page_config(page_title="Inspiart")
@@ -89,9 +89,9 @@ if img:
 
         if res.ok:
             data = res.json()
-        st.subheader("Artwork Information")
-        st.write(f"**Artist:** {data.get('artist', 'Unknown')}")
-        st.write(f"**Name:** {data.get('file_name', 'Unknown')}")
+            st.subheader("Artwork Information")
+            st.write(f"**Artist:** {data.get('artist', 'Unknown')}")
+            st.write(f"**Name:** {data.get('file_name', 'Unknown')}")
 
 
 st.markdown("---")
@@ -127,7 +127,7 @@ if show_related:
         if relation_type != "Similar paintings on content only":
 
             st.markdown("---")
-            st.markdown(f"**Predicted Style:** {related_data.get('predicted_style', 'Unknown')}")
+            st.markdown(f"**Predicted Style:** {related_data.get('style_predicted', 'Unknown')}")
 
         cols = st.columns(5)
 
@@ -137,7 +137,7 @@ if show_related:
         with cols[i % 5]:
             st.markdown(
                 f"""
-                <div style='max-width:400px; margin:auto; text-align:center;'>
+                <div style='max-width:600px; margin:auto; text-align:center;'>
                     <img src="{img_info['img_url']}"
                          style='width:100%; height:auto; display:block; margin:auto; border-radius:8px;'/>
                     <p style="font-size:14px; margin-top:5px;">
