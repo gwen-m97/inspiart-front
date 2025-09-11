@@ -117,7 +117,7 @@ if img:
 st.markdown("---")
 
 # Button related artworks
-relation_type = st.selectbox("Select relatedness type", ["Content only", "Same style", "Other style"])
+relation_type = st.selectbox("Select relatedness type", ["Similar paintings on content only", "Similar paintings from the same style", "Similar paintings from other styles"])
 
 #show related images button
 col1, col2, col3 = st.columns([1, 1, 1])
@@ -130,12 +130,12 @@ if show_related:
 
      # End points
 
-    if relation_type == "Content only":
-        url = f"{BASE_URL}/upload_same_style"
-    elif relation_type == "Same style":
-        url = f"{BASE_URL}/upload_other_style"
-    elif relation_type == "Other style":
+    if relation_type == "Similar paintings on content only":
         url = f"{BASE_URL}/upload_image"
+    elif relation_type == "Similar paintings from the same style":
+        url = f"{BASE_URL}/upload_same_style"
+    elif relation_type == "Similar paintings from other styles":
+        url = f"{BASE_URL}/upload_other_style"
 
 
     res = requests.post(url, files={'img': img.getvalue()})
