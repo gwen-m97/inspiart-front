@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import requests
-
+import re
 from PIL import Image
 #from dotenv import load_dotenv
 import os
@@ -89,15 +89,29 @@ if img:
 
         if res.ok:
             data = res.json()
-            st.subheader("Artwork Information")
-            st.write(f"**Artist:** {data.get('artist', 'Unknown')}")
-            st.write(f"**Name:** {data.get('file_name', 'Unknown')}")
+            raw_name = data.get('file_name', 'Unknown')
+
+        # cleanup
+        ## remove extension
+            clean_name = re.sub(r"\.(jpg|jpeg|png)$", "", raw_name, flags=re.IGNORECASE)
+        #remove id
+            clean_name = re.sub(r"^\d+(-\d+)*-", "", clean_name)
+        #remove year, cuz i want it to be consistent
+            clean_name = re.sub(r"\b\d{4}\b", "", clean_name)
+        #extra spaces and dashes
+            clean_name = clean_name.replace("-", " ").strip()
+        # capitalize each word
+            clean_name = clean_name.title()
 
 
+
+        st.subheader("Artwork Information")
+        st.write(f"**Artist:** {data.get('artist', 'Unknown')}")
+        st.write(f"**Name:** {clean_name}")
 st.markdown("---")
 
 # Button related artworks
-relation_type = st.selectbox("Select relatedness type", ["Similar paintings from the same style", "Similar paintings from different styles", "Similar paintings on content only"])
+relation_type = st.selectbox("Select relatedness type", ["Content only", "Same style", "Other style"])
 
 #show related images button
 col1, col2, col3 = st.columns([1, 1, 1])
@@ -110,11 +124,11 @@ if show_related:
 
      # End points
 
-    if relation_type == "Similar paintings from the same style":
+    if relation_type == "Content only":
         url = f"{BASE_URL}/upload_same_style"
-    elif relation_type == "Similar paintings from different styles":
+    elif relation_type == "Same style":
         url = f"{BASE_URL}/upload_other_style"
-    elif relation_type == "Similar paintings on content only":
+    elif relation_type == "Other style":
         url = f"{BASE_URL}/upload_image"
 
 
