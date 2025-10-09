@@ -31,7 +31,30 @@ This project is split into two repositories:
 - [inspiart](https://github.com/gwen-m97/inspiart): core code (data preprocessing, model training, recommendation engine, API)
 - [inspiart-front](https://github.com/gwen-m97/inspiart-front): Streamlit app
 
+```bash
+└── inspiart
+    ├── Dockerfile
+    ├── setup.py
+    ├── requirements.txt
+    ├── Makefile
+    ├── api
+    │   └─ fast.py
+    ├── models
+    │   └─ model_Xception_alldata_finetuned.keras
+    │   └─ model_clip
+    └── inspiart
+        └── dataset_prep.py
+```
 
+```bash
+└── inspiart-front
+    ├── app.py
+    └── sources
+
+```
+
+
+---
 
 ## Technical Overview
 
@@ -39,8 +62,6 @@ This project is split into two repositories:
 - Used the **[WikiArt dataset](https://www.kaggle.com/datasets/simolopes/wikiart-all-artpieces)** from Kaggle
 - Contains more than 170K artworks across different artistic styles
 - Cleaning to only keep paintings after 1800. 114K images in the end.
-
----
 
 ### 🤖 Models
 
